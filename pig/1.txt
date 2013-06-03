@@ -1,0 +1,19 @@
+wget http://salsahpc.indiana.edu/ScienceCloud/pig-wordcount-7-26.tar
+
+tar -xvf pig-wordcount-7-26.tar
+
+chown hdfs:hdfs pig-wordcount
+
+cd pig-wordcount
+
+su hdfs - -c "hadoop dfs -put input.txt input.txt"
+
+su hdfs - -c "hadoop dfs -ls /user/hdfs"
+
+su hdfs - -c "pig -x local wordcount.pig"
+
+su hdfs - -c "pig -x mapreduce wordcount.pig"
+
+su hdfs - -c "hadoop dfs -text /user/hdfs/wordcount/part*"
+
+http://salsahpc.indiana.edu/ScienceCloud/pig_word_count_tutorial.htm
