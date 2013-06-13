@@ -1,0 +1,17 @@
+hive
+
+CREATE TABLE pokes (foo INT, bar STRING);
+
+SHOW TABLES;
+
+SHOW TABLES '.*s';
+
+DESCRIBE pokes;
+
+ALTER TABLE pokes ADD COLUMNS (new_col INT);
+
+ALTER TABLE pokes RENAME TO pokes2;
+
+DESCRIBE pokes2;
+
+DROP TABLE pokes2;

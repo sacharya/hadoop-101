@@ -1,0 +1,3 @@
+-- Keep the data where it currently resides in hdfs, else it moves to hive/warehouse
+CREATE EXTERNAL TABLE  stocks (exchange STRING, symbol STRING, priceDate STRING, open FLOAT, high FLOAT, low FLOAT, close FLOAT, volume INT, adjClose FLOAT) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+

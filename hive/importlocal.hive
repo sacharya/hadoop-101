@@ -1,0 +1,5 @@
+CREATE TABLE  stocks (exchange STRING, symbol STRING, priceDate STRING, open FLOAT, high FLOAT, low FLOAT, close FLOAT, volume INT, adjClose FLOAT) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+-- Loads from the local filesystem
+LOAD DATA LOCAL INPATH '/user/hdfs/NYSE_daily' OVERWRITE INTO TABLE stocks;
+

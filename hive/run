@@ -1,0 +1,7 @@
+su hdfs - -c "hadoop fs -chown -R hdfs:hdfs /apps/hive/warehouse"
+
+su hdfs - -c "hadoop fs -chmod -R 755 /apps/hive/warehouse/stocks"
+
+su hdfs - -c "hive -f pokes.hive"
+su hdfs - -c "hive -f select.hive"
+su hdfs - -c "hive -f groupby.hive"

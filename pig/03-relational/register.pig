@@ -11,6 +11,7 @@
 -- under the License.
 
 register '<yourpathtopiggybank>/piggybank.jar';
+-- define reverse org.apache.pig.piggybank.evaluation.string.Reverse();
 divs      = load 'NYSE_dividends' as (exchange:chararray, symbol:chararray,
                 date:chararray, dividends:float);
 backwards = foreach divs generate
