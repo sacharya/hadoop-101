@@ -57,4 +57,4 @@ cat ~/.ssh/id_rsa
 From any of the Hadoop nodes,
 
 su - hdfs
-/usr/lib/hadoop/examples-*.jar pi 10 1000000
+hadoop jar /usr/lib/hadoop/hadoop-examples.jar pi 10 1000000
