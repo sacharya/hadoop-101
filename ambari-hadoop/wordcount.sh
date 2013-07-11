@@ -2,7 +2,7 @@
 
 set -x
 
-hadoop fs -rmr /shakespeare
+su hdfs - -c "hadoop fs -rmr /shakespeare"
 cd /tmp
 wget http://homepages.ihug.co.nz/~leonov/shakespeare.tar.bz2
 tar xjvf shakespeare.tar.bz2
