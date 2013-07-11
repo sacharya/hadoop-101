@@ -1,0 +1,33 @@
+rpm -i ~/splunk-5.0.3-163460-linux-2.6-x86_64.rpm
+
+iptables -F
+
+/opt/splunk/bin/splunk start
+
+# Had issues with installing from commandline or manually uploading the tar.
+/opt/splunk/bin/splunk install app ~/HadoopConnect-1.1-151409.tgz -update 1 -auth username:password
+
+# So in reality, I had to Search the app from the UI and install
+splunk:8000
+admin/changeme - But asks you to change password first time you login.
+
+# Update the etc/host on the splunk server with the hadoop cluster nodes. 
+# Make sure the hostname is resolving to correct ip, public or private.
+
+# Install Java
+yum search java | grep 'java-'
+yum install java-1.6.0-openjdk.x86_64
+export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre
+
+# Install Hadoop CLI
+wget http://archive.apache.org/dist/hadoop/core/hadoop-1.2.0/hadoop-1.2.0-bin.tar.gz
+tar -xvf hadoop-1.2.0-bin.tar.gz
+cd hadoop-1.2.0
+./bin/hadoop dfs -fs hdfs://suda-hadoop1:8020 -ls /
+
+# Add Hadoop cluster from UI.
+HDFS URL = suda-hadoop2:8020
+HADOOP_HOME = /root/hadoop-1.2.0
+JAVA_HOME = /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre
+Namenode HTTP Port = 50070
+
