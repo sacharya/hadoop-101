@@ -3,14 +3,14 @@
 set -x
 
 if [[ $EUID -ne 0 ]]; then
-       echo "This script must be run as root"
-          exit 1
-      fi
+    echo "This script must be run as root"
+    exit 1
+fi
 
-      apt-get update
-      apt-get install -y --force-yes debconf-utils pwgen
+apt-get update
+apt-get install -y --force-yes debconf-utils pwgen
 
-      IP=`ifconfig eth0 | grep inet | head -n1 | cut -d":" -f2 | cut -d" " -f1`
+IP=`ifconfig eth0 | grep inet | head -n1 | cut -d":" -f2 | cut -d" " -f1`
 
 #CHEF_URL=${CHEF_URL:-http://$(hostname -f):4000}
 CHEF_URL=${CHEF_URL:-http://$IP:4000}
