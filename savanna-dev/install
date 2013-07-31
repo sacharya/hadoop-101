@@ -1,0 +1,125 @@
+Install Devstack
+cd ~
+git clone https://github.com/openstack-dev/devstack.git
+cd devstack
+
+cat >> localrc <<EOF 
+ADMIN_PASSWORD=admin
+MYSQL_PASSWORD=admin
+RABBIT_PASSWORD=admin
+SERVICE_TOKEN=admin
+SERVICE_PASSWORD=admin
+LOGFILE=/opt/stack/logs/stack.log
+SCREEN_LOGDIR=/opt/stack/logs
+VERBOSE=True
+#KEYSTONE_TOKEN_FORMAT=UUID
+FLOATING_RANGE=192.168.55.224/27
+EXTRA_OPTS=(auto_assign_floating_ip=True)
+EOF
+
+Install Savanna
+
+cd ~
+sudo apt-get install python-dev python-virtualenv
+sudo pip install tox
+sudo pip install httpie
+
+git clone git://github.com/stackforge/savanna.git
+cd savanna/tools
+./install_venv
+cd ..
+
+cp etc/savanna/savanna.conf.sample etc/savanna/savanna.conf
+
+os_admin_password=admin
+
+debug=true#verbose=true
+#use_stderr=true
+default_log_levels=amqplib=WARN,sqlalchemy=WARN,boto=WARN,suds=INFO,keystone=WARN,eventlet.wsgi.server=WARN,savanna=INFO
+log_file=/opt/stack/logs/savanna.log
+
+tox -evenv -- savanna-db-manage --config-file etc/savanna/savanna.conf upgrade head --sql
+
+tox -evenv -- savanna-api --config-file etc/savanna/savanna.conf
+
+Upload image:
+wget http://savanna-files.mirantis.com/savanna-0.1.2-hadoop.qcow2
+glance image-create --name=vanilla-hadoop.image --disk-format=qcow2 --container-format=bare < savanna-0.1.2-hadoop.qcow2
+
+
+Configure keystone:
+
+export OS_USERNAME=admin
+
+export OS_TENANT_NAME=admin
+
+keystone service-create --name=savanna --type=mapreduce --description="Savanna Elastic Hadoop Service"
+
+export SERVICE_ID=`keystone service-list | grep 'mapreduce' | awk '{print $2}'`
+
+keystone endpoint-create --region RegionOne --service-id=$SERVICE_ID --publicurl="http://127.0.0.1:8386/v0.2/%(tenant_id)s" --internalurl="http://127.0.0.1:8386/v0.2/%(tenant_id)s" --adminurl="http://127.0.0.1:8386/v0.2/%(tenant_id)s"
+
+keystone endpoint-list
+
+Use Savanna:
+export OS_USERNAME=demo
+
+export OS_TENANT_NAME=demo
+
+export TENANT_ID=`keystone token-get | grep 'tenant_id' | awk '{print $4}'`
+
+export TOKEN_ID=`keystone token-get | grep ' id' | awk '{print $4}'`
+
+GET node-group-templates
+http http://localhost:8386/v1.0/$TENANT_ID/node-group-templates X-Auth-Token:$TOKEN_ID
+
+POST node-group-templates
+http http://localhost:8386/v1.0/$TENANT_ID/node-group-templates X-Auth-Token:$TOKEN_ID < node_group_tmpl_create.json
+
+
+GET cluster-templates
+http http://localhost:8386/v1.0/$TENANT_ID/cluster-templates X-Auth-Token:$TOKEN_ID
+
+http http://localhost:8386/v1.0/$TENANT_ID/cluster-templates X-Auth-Token:$TOKEN_ID < cluster_tmpl_create.json
+
+
+GET clusters
+http http://localhost:8386/v1.0/$TENANT_ID/clusters X-Auth-Token:$TOKEN_ID
+
+Register Image
+export IMAGE_ID=`nova image-list | grep 'hadoop' | awk '{print $2}'`
+
+http http://localhost:8386/v1.0/$TENANT_ID/images X-Auth-Token:$TOKEN_ID
+
+# Register image with username
+http POST http://localhost:8386/v1.0/$TENANT_ID/images/$IMAGE_ID X-Auth-Token:$TOKEN_ID username=ubuntu --verbose
+
+
+# Tag the image
+http POST http://localhost:8386/v1.0/$TENANT_ID/images/$IMAGE_ID/tag X-Auth-Token:$TOKEN_ID tags:='["vanilla", "1.1.2", "ubuntu"]'
+
+
+http http://localhost:8386/v1.0/$TENANT_ID/clusters X-Auth-Token:$TOKEN_ID < cluster_create_minimal.json
+
+
+sqlite3 /tmp/savanna-server.db
+
+.tables
+select * from Cluster;
+.quit
+
+
+To delete a resource
+http DELETE http://localhost:8386/v1.0/$TENANT_ID/clusters/id X-Auth-Token:$TOKEN_ID
+
+curl -H "X-Auth-Token:421a340109574d2397d27f20a5c59320" http://localhost:8080/v0.2/dfb63a92c4d946c988993b3344636e76
+
+curl -H "X-Auth-Token:5995352dd9e7464a93d704b3f2ed744a" http://166.78.62.177:8774/v2/dfb63a92c4d946c988993b3344636e76/servers
+
+Sqlite:
+sqlite3 /tmp/savanna-server.db
+
+.tables
+select * from Cluster;
+.quit
+

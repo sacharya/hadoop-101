@@ -1,0 +1,21 @@
+{
+    "name": "test",
+        "plugin_name": "vanilla",
+        "hadoop_version": "1.1.2",
+        "default_image_id": "1e43773b-d315-4651-9a1a-d9e27dca6fe0",
+        "node_groups": [
+        {
+            "name": "master",
+            "flavor_id": "2",
+            "node_processes": ["jobtracker", "namenode"],
+            "count": 1
+        },
+        {
+            "name": "worker",
+            "flavor_id": "2",
+            "node_processes": ["tasktracker", "datanode"],
+            "count": 1
+        }
+    ]
+}
+
