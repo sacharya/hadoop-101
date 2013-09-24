@@ -55,10 +55,14 @@ cat hosts.txt
 # SSH Private Key
 cat ~/.ssh/id_rsa
 
-Complete the installation using rest of the qizard.
+Complete the installation using rest of the wizard.
 
 5. Validate Hadoop:
 ssh root@hadoop1
 
-su - hdfs
-hadoop jar /usr/lib/hadoop/hadoop-examples.jar pi 10 1000000
+curl https://raw.github.com/sacharya/hadoop-101/master/ambari-hadoop/wordcount.sh | bash
+
+su hdfs - -c "hadoop fs -ls /
+"
+#su - hdfs
+#hadoop jar /usr/lib/hadoop/hadoop-examples.jar pi 10 1000000
