@@ -62,7 +62,6 @@ ssh root@hadoop1
 
 curl https://raw.github.com/sacharya/hadoop-101/master/ambari-hadoop/wordcount.sh | bash
 
-su hdfs - -c "hadoop fs -ls /
-"
+su hdfs - -c "hadoop fs -ls /"
 #su - hdfs
 #hadoop jar /usr/lib/hadoop/hadoop-examples.jar pi 10 1000000
