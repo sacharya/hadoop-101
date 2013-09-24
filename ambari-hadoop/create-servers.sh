@@ -79,4 +79,20 @@ for i in $(eval echo "{1..$HADOOP_SIZE}")
 do
     echo $CLUSTER_NAME$i >> 'hosts.txt'
 done
+cat hosts.txt
+
+private_ip=`nova show $CLUSTER_NAME-Ambari | grep 'private network' | awk '{print $5}'`
+public_ip=`nova show $CLUSTER_NAME-Ambari | grep 'accessIPv4' | awk '{print $4}'`
+echo $private_ip $CLUSTER_NAME-Ambari >> 'etc_hosts.txt'
+echo $public_ip $CLUSTER_NAME-Ambari >> 'etc_hosts.txt'
+
+for i in $(eval echo "{1..$HADOOP_SIZE}")
+do
+    pr_ip=`nova show $CLUSTER_NAME$i | grep 'private network' | awk '{print $5}'`
+    pu_ip=`nova show $CLUSTER_NAME$i | grep 'accessIPv4' | awk '{print $4}'`
+    echo $pr_ip $CLUSTER_NAME$i >> 'etc_hosts.txt'
+    echo $pu_ip $CLUSTER_NAME$i >> 'etc_hosts.txt'
+done
+cat etc_hosts.txt
+
 echo "CLUSTER is READY"
