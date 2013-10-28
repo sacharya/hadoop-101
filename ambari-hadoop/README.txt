@@ -60,8 +60,12 @@ Complete the installation using rest of the wizard.
 5. Validate Hadoop:
 ssh root@hadoop1
 
+For Hadoop 1.*
 curl https://raw.github.com/sacharya/hadoop-101/master/ambari-hadoop/wordcount.sh | bash
 
 su hdfs - -c "hadoop fs -ls /"
 #su - hdfs
 #hadoop jar /usr/lib/hadoop/hadoop-examples.jar pi 10 1000000
+
+For Hadoop2.0
+curl https://raw.github.com/sacharya/hadoop-101/master/ambari-hadoop/wordcount2.sh | bash
