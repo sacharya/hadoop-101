@@ -65,8 +65,8 @@ boot() {
 }
 
 boot $FLAVOR_ID $IMAGE_ID $CLUSTER_NAME-Ambari
-HADOOP_SIZE=`expr $CLUSTER_SIZE - 1`
-for i in $(eval echo "{1..$HADOOP_SIZE}")
+CLUSTER_SIZE=`expr $CLUSTER_SIZE - 1`
+for i in $(eval echo "{1..$CLUSTER_SIZE}")
 do    
 	boot $FLAVOR_ID $IMAGE_ID $CLUSTER_NAME$i
 done
@@ -85,7 +85,7 @@ is_not_active() {
 while true
 do
 	READY=1
-	for i in $(eval echo "{1..$HADOOP_SIZE}")
+	for i in $(eval echo "{1..$CLUSTER_SIZE}")
 	do  
 		if is_not_active $CLUSTER_NAME$i; then
 			READY=0
@@ -102,7 +102,7 @@ do
 	sleep 5
 done
 
-for i in $(eval echo "{1..$HADOOP_SIZE}")
+for i in $(eval echo "{1..$CLUSTER_SIZE}")
 do
 	echo $CLUSTER_NAME$i >> 'hosts.txt'
 done
@@ -116,7 +116,7 @@ record_ip(){
 }
 
 record_ip $CLUSTER_NAME-Ambari
-for i in $(eval echo "{1..$HADOOP_SIZE}"); do record_ip $CLUSTER_NAME$i; done
+for i in $(eval echo "{1..$CLUSTER_SIZE}"); do record_ip $CLUSTER_NAME$i; done
 
 cat etc_hosts.txt
 
